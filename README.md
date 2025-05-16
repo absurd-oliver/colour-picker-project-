@@ -15,4 +15,4 @@
 ## Attention !  
 Add a DOMContentLoaded wrapper around all your inline DOM code.  
 Keep top-level async functions outside the wrapper so they stay accessible  
-<sub>these steps are required for the javascript to oroperly work in the stanalone</sub>
+<sub>these steps are required for the javascript to work properly in the stanalone</sub>
