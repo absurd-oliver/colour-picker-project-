@@ -3,4 +3,11 @@
 <sub> option to copy as RGB, HEX or HSL (no HSV support yet) </sub> \
 <sub> semi-functional mobile and desktop layout </sub> \
 <sub> working on adding downloadable css file </sub> \
-<sub> dark/light theme </sub>
+<sub> dark/light theme </sub>  
+  
+# standalone.html builder  
+## ensure that the following files are named as such:  
+  
+• html file: index.html  
+• javascript file: code.js  
+• css file: styles.css  
