@@ -6,31 +6,62 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('downloadBtn').addEventListener('click', downloadStandalone);
 });
 
-async function generateStandalone() {
+function generateStandalone() {
   try {
-    let [html, css, js] = await Promise.all([
-      fetch('index.html').then(r => r.text()),
-      fetch('styles.css').then(r => r.text()),
-      fetch('code.js').then(r => r.text()),
-    ]);
+    const htmlFrame = document.getElementById('htmlFrame');
+    const cssLink = document.getElementById('cssLink');
+    const jsScript = document.getElementById('jsScript');
 
-    // Strip external references
-    html = html
-      .replace(/<link\s+rel=["']stylesheet["']\s+href=["']styles\.css["']\s*\/?>/i, '')
-      .replace(/<script\s+src=["']code\.js["']\s*>\s*<\/script>/i, '');
+    // Wait for iframe (index.html) to load
+    htmlFrame.onload = () => {
+      const doc = htmlFrame.contentDocument || htmlFrame.contentWindow.document;
+      let html = doc.documentElement.outerHTML;
 
-    // Inject inline <style> and <script>
-    cachedStandalone = html
-      .replace('</head>', `<style>\n${css}\n</style>\n<script>\n${js.replace(/<\/script>/gi, '<\\/script>')}\n</script>\n</head>`);
+      // Fetch CSS
+      fetch(cssLink.href)
+        .then(res => res.text())
+        .then(css => {
+          // Fetch JS
+          fetch(jsScript.src)
+            .then(res => res.text())
+            .then(js => {
+              // Clean up external links
+              html = html.replace(/<link\s+[^>]*href=["']styles\.css["'][^>]*>/i, '');
+              html = html.replace(/<script\s+[^>]*src=["']code\.js["'][^>]*>\s*<\/script>/i, '');
 
-    document.getElementById('output').value = cachedStandalone;
+              // Escape closing </script> tag
+              js = js.replace(/<\/script>/gi, '<\\/script>');
+
+              // Inline CSS and JS
+              html = html.replace(
+                /<\/head>/i,
+                `<style>\n${css}\n</style>\n<script>\n${js}\n</script>\n</head>`
+              );
+
+              cachedStandalone = html;
+              document.getElementById('output').value = cachedStandalone;
+            })
+            .catch(err => {
+              alert("Failed to load JS file: " + err.message);
+            });
+        })
+        .catch(err => {
+          alert("Failed to load CSS file: " + err.message);
+        });
+    };
+
+    // Force reload of iframe (to trigger onload)
+    htmlFrame.src = htmlFrame.src;
+
   } catch (e) {
     alert("Error generating standalone HTML: " + e.message);
+    console.error(e);
   }
 }
 
 function copyToClipboard() {
   const output = document.getElementById('output');
+  if (!output) return;
   output.select();
   document.execCommand('copy');
   alert('Copied to clipboard!');
