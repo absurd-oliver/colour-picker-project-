@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Color Picker</title>
+  <style>
+:root {
+  --bg-color: #121212;
+  --text-color: #ffffff;
+  --highlight-color: #1f1f1f;
+  --border-color: #333;
+}
+
+body.light {
+  --transition: 250ms;
+  --bg-color: #f0f0f0;
+  --text-color: #000;
+  --highlight-color: #ffffff;
+  --border-color: #ccc;
+}
+
+body {
+  transition: 250ms;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: sans-serif;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.app-container {
+  max-width: 400px;
+  width: 100%;
+  background: var(--highlight-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 10px #0004;
+}
+
+h1#colourText {
+  text-align: center;
+  font-size: 2em;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.sliders .slider-group {
+  margin: 10px 0;
+}
+
+.slider-group input[type="range"] {
+  width: 100%;
+  height: 30px;
+  border-radius: 12px;
+  appearance: none;
+  background: transparent;
+}
+
+.slider-group.red input[type="range"]::-webkit-slider-runnable-track {
+  background: red;
+}
+.slider-group.green input[type="range"]::-webkit-slider-runnable-track {
+  background: green;
+}
+.slider-group.blue input[type="range"]::-webkit-slider-runnable-track {
+  background: blue;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  background: var(--text-color);
+  border: 2px solid var(--border-color);
+  margin-top: -8px;
+  cursor: pointer;
+}
+
+.preview {
+  height: 50px;
+  margin: 20px 0;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.format-toggle {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background: var(--text-color);
+  color: var(--bg-color);
+  font-weight: bold;
+  cursor: pointer;
+}
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <h1 id="colourText" class="colourTextClass">Copy Colour</h1>
+<div class="preview" id="colorPreview"></div>
+    <div class="sliders">
+      <div class="slider-group red">
+        <label for="redSlider">Red: <span id="redValue">0</span></label>
+        <input type="range" id="redSlider" min="0" max="255">
+      </div>
+      <div class="slider-group green">
+        <label for="greenSlider">Green: <span id="greenValue">0</span></label>
+        <input type="range" id="greenSlider" min="0" max="255">
+      </div>
+      <div class="slider-group blue">
+        <label for="blueSlider">Blue: <span id="blueValue">0</span></label>
+        <input type="range" id="blueSlider" min="0" max="255">
+      </div>
+    </div>
+
+
+    <div class="format-toggle">
+      <label><input type="radio" name="format" value="rgb" checked> RGB</label>
+      <label><input type="radio" name="format" value="hex"> HEX</label>
+      <label><input type="radio" name="format" value="hsl"> HSL</label>
+    </div>
+
+    <button id="downloadCSS">Download CSS</button>
+    <button id="toggleTheme">Dark / Light</button>
+  </div>
+
+  <script>
+let textToCopy = '';
+let copied = false;
+
+const colourText = document.getElementById('colourText');
+const redSlider = document.getElementById('redSlider');
+const greenSlider = document.getElementById('greenSlider');
+const blueSlider = document.getElementById('blueSlider');
+const redValue = document.getElementById('redValue');
+const greenValue = document.getElementById('greenValue');
+const blueValue = document.getElementById('blueValue');
+const colorPreview = document.getElementById('colorPreview');
+const formatRadios = document.getElementsByName('format');
+const downloadCSS = document.getElementById('downloadCSS');
+const toggleTheme = document.getElementById('toggleTheme');
+
+function updateValuesFromLocalStorage() {
+  const saved = JSON.parse(localStorage.getItem('colorState'));
+  if (saved) {
+    redSlider.value = saved.r;
+    greenSlider.value = saved.g;
+    blueSlider.value = saved.b;
+  }
+}
+
+function saveValuesToLocalStorage(r, g, b) {
+  localStorage.setItem('colorState', JSON.stringify({ r, g, b }));
+}
+
+function rgbToHex(r, g, b) {
+  return `#${[r, g, b].map(x => x.toString(16).padStart(2, '0')).join('')}`;
+}
+
+function rgbToHsl(r, g, b) {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  let max = Math.max(r, g, b),
+      min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+
+  if (max === min) h = s = 0;
+  else {
+    let d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+  return `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`;
+}
+
+function getCurrentFormat(r, g, b) {
+  let selected = [...formatRadios].find(r => r.checked).value;
+  if (selected === 'rgb') return `rgb(${r}, ${g}, ${b})`;
+  if (selected === 'hex') return rgbToHex(r, g, b);
+  if (selected === 'hsl') return rgbToHsl(r, g, b);
+}
+
+function updateDisplay() {
+  const r = parseInt(redSlider.value);
+  const g = parseInt(greenSlider.value);
+  const b = parseInt(blueSlider.value);
+
+  redValue.textContent = r;
+  greenValue.textContent = g;
+  blueValue.textContent = b;
+
+  const colorString = getCurrentFormat(r, g, b);
+  textToCopy = colorString;
+  colorPreview.style.backgroundColor = colorString;
+
+  saveValuesToLocalStorage(r, g, b);
+}
+
+[redSlider, greenSlider, blueSlider, ...formatRadios].forEach(el => {
+  el.addEventListener('input', updateDisplay);
+});
+
+colourText.addEventListener('click', () => {
+  if (!copied) {
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        colourText.textContent = 'copied';
+        copied = true;
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+        colourText.textContent = 'failed to copy';
+      });
+  } else {
+    colourText.textContent = 'Copy Colour';
+    copied = false;
+  }
+});
+
+downloadCSS.addEventListener('click', () => {
+  const css = `:root {\n  --main-color: ${textToCopy};\n}`;
+  const blob = new Blob([css], { type: 'text/css' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'color.css';
+  link.click();
+});
+
+toggleTheme.addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+});
+
+// Theme persistence
+if (localStorage.getItem('theme') === 'light') {
+  document.body.classList.add('light');
+}
+
+updateValuesFromLocalStorage();
+updateDisplay();
+</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Color Picker</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="code.js" defer></script>
+</head>
+<body>
+  <div class="app-container">
+    <h1 id="colourText" class="colourTextClass">Copy Colour</h1>
+<div class="preview" id="colorPreview"></div>
+    <div class="sliders">
+      <div class="slider-group red">
+        <label for="redSlider">Red: <span id="redValue">0</span></label>
+        <input type="range" id="redSlider" min="0" max="255">
+      </div>
+      <div class="slider-group green">
+        <label for="greenSlider">Green: <span id="greenValue">0</span></label>
+        <input type="range" id="greenSlider" min="0" max="255">
+      </div>
+      <div class="slider-group blue">
+        <label for="blueSlider">Blue: <span id="blueValue">0</span></label>
+        <input type="range" id="blueSlider" min="0" max="255">
+      </div>
+    </div>
+
+
+    <div class="format-toggle">
+      <label><input type="radio" name="format" value="rgb" checked> RGB</label>
+      <label><input type="radio" name="format" value="hex"> HEX</label>
+      <label><input type="radio" name="format" value="hsl"> HSL</label>
+    </div>
+
+    <button id="downloadCSS">Download CSS</button>
+    <button id="toggleTheme">Dark / Light</button>
+  </div>
+</body>
+</html>
