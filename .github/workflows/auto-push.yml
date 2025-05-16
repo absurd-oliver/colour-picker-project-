@@ -1,0 +1,43 @@
+name: Auto Pull from DriveHQ and Commit
+
+on:
+  workflow_dispatch:  # allows manual trigger
+  schedule:
+    - cron: '*/30 * * * *'  # runs every 30 minutes
+
+jobs:
+  auto-pull:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
+
+      - name: Pull from SFTP
+        env:
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          SFTP_PASS: ${{ secrets.SFTP_PASS }}
+        run: |
+          mkdir -p temp_download
+          lftp -u $SFTP_USER,$SFTP_PASS sftp://ftp.drivehq.com <<EOF
+          mirror --verbose /project/ temp_download/
+          bye
+          EOF
+
+      - name: Copy files into repo
+        run: |
+          cp -r temp_download/* .
+          rm -rf temp_download
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Auto-pulled from DriveHQ at $(date)" || echo "Nothing to commit"
+          git push
