@@ -11,3 +11,8 @@
 • html file: index.html  
 • javascript file: code.js  
 • css file: styles.css  
+
+## Attention !  
+Add a DOMContentLoaded wrapper around all your inline DOM code.  
+Keep top-level async functions outside the wrapper so they stay accessible  
+<sub>these steps are required for the javascript to oroperly work in the stanalone</sub>
