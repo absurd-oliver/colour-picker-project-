@@ -16,17 +16,18 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y lftp
+          sudo apt-get install -y sshpass
 
-      - name: Pull from SFTP
+      - name: Pull from SFTP (DriveHQ)
         env:
           SFTP_USER: ${{ secrets.SFTP_USER }}
           SFTP_PASS: ${{ secrets.SFTP_PASS }}
         run: |
-          echo "set sftp:connect-program 'ssh -o StrictHostKeyChecking=no'" >> ~/.lftprc
           mkdir -p temp_download
-          lftp -u $SFTP_USER,$SFTP_PASS sftp://ftp.drivehq.com <<EOF
-          mirror --verbose /project/ temp_download/
+          sshpass -p "$SFTP_PASS" sftp -o StrictHostKeyChecking=no $SFTP_USER@ftp.drivehq.com <<EOF
+          lcd temp_download
+          cd /project/
+          mget *
           bye
           EOF
           chmod -R u+rw temp_download
