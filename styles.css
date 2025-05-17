@@ -19,29 +19,33 @@ body {
   color: var(--text-color);
   font-family: sans-serif;
   margin: 0;
-  padding: 20px;
+  padding: 5vw;
   display: flex;
   justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .app-container {
-  max-width: 400px;
+  max-width: 500px;
   width: 100%;
   background: var(--highlight-color);
   border-radius: 12px;
-  padding: 20px;
+  padding: 5vw;
   box-shadow: 0 0 10px #0004;
+  box-sizing: border-box;
 }
 
 h1#colourText {
   text-align: center;
-  font-size: 2em;
-  margin-bottom: 20px;
+  font-size: 6vw;
+  margin-bottom: 5vw;
   cursor: pointer;
 }
 
 .sliders .slider-group {
-  margin: 10px 0;
+  margin: 4vw 0;
 }
 
 .slider-group input[type="range"] {
@@ -75,7 +79,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 .preview {
   height: 50px;
-  margin: 20px 0;
+  margin: 5vw 0;
   border-radius: 8px;
   border: 1px solid var(--border-color);
 }
@@ -83,17 +87,33 @@ input[type="range"]::-webkit-slider-thumb {
 .format-toggle {
   display: flex;
   justify-content: space-around;
-  margin-bottom: 20px;
+  margin-bottom: 5vw;
 }
 
 button {
   width: 100%;
-  padding: 10px;
+  padding: 3vw;
   border: none;
   border-radius: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 3vw;
   background: var(--text-color);
   color: var(--bg-color);
   font-weight: bold;
   cursor: pointer;
+  font-size: 4vw;
+}
+
+@media (min-width: 768px) {
+  h1#colourText {
+    font-size: 2em;
+  }
+
+  button {
+    font-size: 1em;
+    padding: 10px;
+  }
+
+  .app-container {
+    padding: 20px;
+  }
 }
