@@ -29,6 +29,7 @@ jobs:
           mirror --verbose /project/ temp_download/
           bye
           EOF
+          chmod -R u+rw temp_download
 
       - name: Copy files into repo
         run: |
