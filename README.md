@@ -5,14 +5,14 @@
 <sub> working on adding downloadable css file </sub> \
 <sub> dark/light theme </sub>  
   
-# standalone.html builder  
-## ensure that the following files are named as such:  
+# builder.js standalone builder  
+## ensure that the following requirements are met:  
   
-• html file: index.html  
-• javascript file: code.js  
-• css file: styles.css  
+• node.js installed  
+• nodemon installed    
 
 ## Attention !  
+<sub>javascript may not be added correctly to standalone.html when using the builder</sub>
 Add a DOMContentLoaded wrapper around all your inline DOM code.  
 Keep top-level async functions outside the wrapper so they stay accessible  
-<sub>these steps are required for the javascript to work properly in the stanalone</sub>
+<sub>these steps are required for the javascript to work properly in the standlone</sub>
