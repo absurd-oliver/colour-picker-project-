@@ -80,20 +80,16 @@ function updateDisplay() {
 });
 
 colourText.addEventListener('click', () => {
-  if (!copied) {
-    navigator.clipboard.writeText(textToCopy)
-      .then(() => {
-        colourText.textContent = 'copied';
-        copied = true;
-      })
-      .catch(err => {
-        console.error('Failed to copy: ', err);
-        colourText.textContent = 'failed to copy';
-      });
-  } else {
-    colourText.textContent = 'Copy Colour';
-    copied = false;
-  }
+ navigator.clipboard.writeText(textToCopy)
+  .then(() => {
+    colourText.textContent = 'copied';
+    copied = true;
+    setTimeout(() => {
+      copied = false;
+      colourText.textContent = 'Copy Colour';
+    }, 450);
+  })
+  
 });
 
 downloadCSS.addEventListener('click', () => {
