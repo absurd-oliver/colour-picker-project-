@@ -10,6 +10,7 @@
   
 • node.js installed  
 • nodemon installed    
+• have your own .json files to execute the build functionalities  
 
 ## Attention !  
 Add a DOMContentLoaded wrapper around all your inline DOM code.  
