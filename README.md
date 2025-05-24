@@ -1,5 +1,6 @@
 # colour-picker-project-
-## a simple colour picker I wrote up during a drive, https://absurd-oliver.github.io/colour-picker-project-/
+## a simple colour picker I wrote up during a drive  
+<sub>https://absurd-oliver.github.io/colour-picker-project-/</sub> \
 <sub> option to copy as RGB, HEX or HSL (no HSV support yet) </sub> \
 <sub> semi-functional mobile and desktop layout </sub> \
 <sub> working on adding downloadable css file </sub> \
